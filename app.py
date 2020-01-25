@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, abort, request, jsonify
 from flask_wtf import FlaskForm
 from wtforms import StringField
 from wtforms.validators import DataRequired
@@ -32,10 +32,10 @@ def homepage():
         username = form.username.data
         url = 'https://www.tiktok.com/@{}'.format(username)
         # Hit the TikTok server
-        request = requests.get(url, headers=headers)
-        if request.status_code == 200:
+        page = requests.get(url, headers=headers)
+        if page.status_code == 200:
             # Parsing and getting the data from the page
-            soup = BeautifulSoup(request.text, 'html.parser')
+            soup = BeautifulSoup(page.text, 'html.parser')
             avatar = soup.find(attrs={'class': 'profile-avatar'}).next_element
             following = soup.find(attrs={'title': 'Following'})
             followers = soup.find(attrs={'title': 'Followers'})
@@ -49,8 +49,21 @@ def homepage():
                                    likes=likes.get_text(),
                                    username=username,
                                    )
+        else:
+            abort(500)
     # Rendering the homepage
     return render_template('home.html', form=form)
+
+
+# 500 error handler
+@app.errorhandler(500)
+def internal_server_error(e):
+    if request.accept_mimetypes.accept_json and \
+            not request.accept_mimetypes.accept_html:
+        response = jsonify({'error': 'internal server error'})
+        response.status_code = 500
+        return response
+    return render_template('errors/500.html'), 500
 
 
 # Entry point
