@@ -2,3 +2,4 @@ flask==1.1.1
 flask-WTF==0.14.2
 requests==2.22.0
 beautifulsoup4==4.8.2
+gunicorn==20.0.4
