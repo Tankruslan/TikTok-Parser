@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Results - {{ username }}
+{% endblock %}
+
+{% block content %}
+    <div class="col-4 offset-4 mb-5">
+        <h1 class="text-center mt-5 mb-5">@{{ username }}</h1>
+        <img src="{{ avatar }}" alt="avatar" class="float-left mr-5" style="max-width: 250px; border-radius: 50%">
+        <h3 class="mb-4">Followings: <span class="badge badge-secondary">{{ following }}</span></h3>
+        <h3 class="mb-4">Followers: <span class="badge badge-secondary">{{ followers }}</span></h3>
+        <h3 class="mb-4">Likes: <span class="badge badge-secondary">{{ likes }}</span></h3>
+        <a href="/" class="btn btn-primary mt-5 float-right">One more request</a>
+    </div>
+{% endblock content %}

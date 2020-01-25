@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="col-4 offset-4">
+        <h1 class="text-center mb-5 mt-5">TikTok data scrapper</h1>
+        <form action="" method="POST">
+            {{ form.csrf_token }}
+            <div class="form-group">
+                {{ form.username }}
+                <small id="username_help" class="form-text text-muted">
+                    {{ form.username.description }}
+                </small>
+            </div>
+            <button type="submit" class="btn btn-primary float-right">Search</button>
+        </form>
+    </div>
+{% endblock content %}
