@@ -36,19 +36,24 @@ def homepage():
         if page.status_code == 200:
             # Parsing and getting the data from the page
             soup = BeautifulSoup(page.text, 'html.parser')
-            avatar = soup.find(attrs={'class': 'profile-avatar'}).next_element
-            following = soup.find(attrs={'title': 'Following'})
-            followers = soup.find(attrs={'title': 'Followers'})
-            likes = soup.find(attrs={'title': 'Likes'})
-            username = username
-            # Rendering the results page
-            return render_template('results.html',
-                                   avatar=avatar.attrs.get('src'),
-                                   following=following.get_text(),
-                                   followers=followers.get_text(),
-                                   likes=likes.get_text(),
-                                   username=username,
-                                   )
+            # If account is found
+            if not soup.find_all('h2', string="Couldn't find this account"):
+                avatar = soup.find(attrs={'class': 'profile-avatar'}).next_element
+                following = soup.find(attrs={'title': 'Following'})
+                followers = soup.find(attrs={'title': 'Followers'})
+                likes = soup.find(attrs={'title': 'Likes'})
+                username = username
+                # Rendering the results page
+                return render_template('results.html',
+                                       avatar=avatar.attrs.get('src'),
+                                       following=following.get_text(),
+                                       followers=followers.get_text(),
+                                       likes=likes.get_text(),
+                                       username=username,
+                                       )
+            # If account not found
+            else:
+                abort(404)
         else:
             abort(500)
     # Rendering the homepage
@@ -64,6 +69,17 @@ def internal_server_error(e):
         response.status_code = 500
         return response
     return render_template('errors/500.html'), 500
+
+
+# 404 error handler
+@app.errorhandler(404)
+def internal_server_error(e):
+    if request.accept_mimetypes.accept_json and \
+            not request.accept_mimetypes.accept_html:
+        response = jsonify({'error': 'not found error'})
+        response.status_code = 404
+        return response
+    return render_template('errors/404.html'), 404
 
 
 # Entry point
